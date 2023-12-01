@@ -6,7 +6,7 @@ from mongo_client import get_mongodb_client_connection
 app = Flask(__name__)
 
 mongo_db_name = 'db'
-mongo_collection_name = 'your_collection_name1'
+mongo_collection_name = 'your_collection_name'
 
 client = get_mongodb_client_connection()
 
@@ -14,8 +14,8 @@ client = get_mongodb_client_connection()
 def health():
     return jsonify({'status': 'healthy'})
 
-@app.route('/start')
-def start():
+@app.route('/')
+def index():
     return render_template('index1.html')
 
 

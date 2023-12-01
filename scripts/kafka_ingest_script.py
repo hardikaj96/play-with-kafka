@@ -6,7 +6,7 @@ import random
 from datetime import datetime
 
 # Kafka broker configuration
-kafka_broker = 'kafka4:9092'
+kafka_broker = 'kafka:9092'
 kafka_topic = 'example_topic'
 
 # Create an instance of Faker
