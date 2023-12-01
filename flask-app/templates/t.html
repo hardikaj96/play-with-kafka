@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Timeseries Chart with Highcharts</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+</head>
+<body>
+
+<div id="liveChart" style="height: 400px; width: 800px;"></div>
+
+<script>
+    var liveChart;
+    // Function to add data to the chart
+    async function prepopulate() {
+        try {
+            const response = await fetch('/prepopulate');  // Replace with your actual API endpoint
+            const data = await response.json();
+            console.log(data)
+            var d1 = data.map(item => ({
+                x: (new Date(item.datetime)).getTime(),
+                y: item.numeric_1
+            }));
+            liveChart = Highcharts.chart('liveChart', {
+                chart: {
+                    type: 'spline',
+                    animation: Highcharts.svg, // don't animate in old IE
+                    marginRight: 10,
+                },
+                title: {
+                    text: 'Live Timeseries Data'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    tickPixelInterval: 150
+                },
+                yAxis: {
+                    title: {
+                        text: 'Value'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '<b>' + Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '</b><br/>' +
+                            Highcharts.numberFormat(this.y, 2);
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                exporting: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Live Timeseries Data',
+                    data: d1
+                }]
+            });
+            
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+    // Initialize the chart
+    prepopulate()
+
+    // Function to add data to the chart
+    async function addData() {
+        try {
+            const response = await fetch('/api/data');  // Replace with your actual API endpoint
+            const data = await response.json();
+            console.log(data)
+            // Generate a random y-value for demonstration purposes
+            var y = data.numeric_1;
+            console.log(new Date(data.datetime))
+            // Add the data to the chart
+            var x = (new Date(data.datetime)).getTime(); // current time
+            console.log(x)
+            console.log(y)
+            liveChart.series[0].addPoint([x, y], true, true);
+
+            // Remove the first data point if the chart has too many points
+            if (liveChart.series[0].data.length > 50) {
+                liveChart.series[0].data[0].remove();
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    // Simulate live data updates
+    setInterval(addData, 3000); // Update every second
+</script>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+version: '3'
+services:
+ kerberos:
+   image: kerberos/kerberos
+   ports:
+     - 8800:88
+     - 4640:464

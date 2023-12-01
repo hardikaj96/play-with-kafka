@@ -1,0 +1,12 @@
+/* styles.css */
+#liveChartContainer {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#liveChart {
+    height: 400px;
+    width: 800px;
+}
